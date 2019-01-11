@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/terminux/Documents/Projects/Electro/Resources/mainui.ui'
+# Form implementation generated from reading ui file 'Resources/mainui.ui',
+# licensing of 'Resources/mainui.ui' applies.
 #
-# Created by: PyQt5 UI code generator 5.10.1
+# Created: Fri Jan 11 19:26:49 2019
+#      by: pyside2-uic  running on PySide2 5.12.0
 #
 # WARNING! All changes made in this file will be lost!
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PySide2 import QtCore, QtGui, QtWidgets
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -410,46 +412,45 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
-        _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "Electro"))
-        self.horizontalGroupBox.setTitle(_translate("MainWindow", "USB and Plotting Settings"))
-        self.label.setText(_translate("MainWindow", "USB Device"))
-        self.label_2.setText(_translate("MainWindow", "Speed"))
-        self.liveplottingcheckbox.setText(_translate("MainWindow", "Live Plotting"))
-        self.loggingcheckbox.setText(_translate("MainWindow", "Logging"))
-        self.filecheckbox.setText(_translate("MainWindow", "File Recording"))
-        self.label_3.setText(_translate("MainWindow", "Filepath Recording"))
-        self.filepathtoolbutton.setText(_translate("MainWindow", "..."))
-        self.customnamecheckbox.setText(_translate("MainWindow", "Custom name"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.liveplottingtab), _translate("MainWindow", "Live Plotting"))
-        self.label_5.setText(_translate("MainWindow", "From"))
-        self.label_6.setText(_translate("MainWindow", "To"))
-        self.label_4.setText(_translate("MainWindow", "Filepath Recording"))
-        self.filepathtoolbutton_2.setText(_translate("MainWindow", "..."))
-        self.customnamecheckbox_2.setText(_translate("MainWindow", "Custom Name"))
-        self.autoopenfilecheckbox.setText(_translate("MainWindow", "Auto Open"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.samplingtab), _translate("MainWindow", "Sampling"))
-        self.label_7.setText(_translate("MainWindow", "Action Type"))
-        self.label_8.setText(_translate("MainWindow", "Operator"))
-        self.label_9.setText(_translate("MainWindow", "Temperature"))
-        self.stopmonitorbutton.setText(_translate("MainWindow", "Stop"))
-        self.monitoringlabel.setText(_translate("MainWindow", "Monitoring"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.handlerstab), _translate("MainWindow", "Handlers"))
-        self.menuFile.setTitle(_translate("MainWindow", "File"))
-        self.menuSettings.setTitle(_translate("MainWindow", "Electro"))
-        self.menuPlotting.setTitle(_translate("MainWindow", "Plotting"))
-        self.menuEdit.setTitle(_translate("MainWindow", "Edit"))
-        self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar"))
-        self.actionOpen_Plot_File.setText(_translate("MainWindow", "Open Plot File"))
-        self.actionClose.setText(_translate("MainWindow", "Close"))
-        self.actionopen_settings.setText(_translate("MainWindow", "Settings"))
-        self.actionStart_Plotting.setText(_translate("MainWindow", "Start Plotting"))
-        self.actionPlottings_UI.setText(_translate("MainWindow", "Plottings UI (exp)"))
-        self.actionRefresh_Devices.setText(_translate("MainWindow", "Refresh Devices"))
-        self.actionClear_Device_List.setText(_translate("MainWindow", "Clear Device List"))
-        self.actionRestore_All.setText(_translate("MainWindow", "Restore All"))
-        self.actionRestore_All.setToolTip(_translate("MainWindow", "Restore all tab settings to default"))
-        self.actionRestore_Tab.setText(_translate("MainWindow", "Restore Tab"))
-        self.actionRestore_Tab.setToolTip(_translate("MainWindow", "Restore the selected tab to default"))
+        MainWindow.setWindowTitle(QtWidgets.QApplication.translate("MainWindow", "Electro", None, -1))
+        self.horizontalGroupBox.setTitle(QtWidgets.QApplication.translate("MainWindow", "USB and Plotting Settings", None, -1))
+        self.label.setText(QtWidgets.QApplication.translate("MainWindow", "USB Device", None, -1))
+        self.label_2.setText(QtWidgets.QApplication.translate("MainWindow", "Speed", None, -1))
+        self.liveplottingcheckbox.setText(QtWidgets.QApplication.translate("MainWindow", "Live Plotting", None, -1))
+        self.loggingcheckbox.setText(QtWidgets.QApplication.translate("MainWindow", "Logging", None, -1))
+        self.filecheckbox.setText(QtWidgets.QApplication.translate("MainWindow", "File Recording", None, -1))
+        self.label_3.setText(QtWidgets.QApplication.translate("MainWindow", "Filepath Recording", None, -1))
+        self.filepathtoolbutton.setText(QtWidgets.QApplication.translate("MainWindow", "...", None, -1))
+        self.customnamecheckbox.setText(QtWidgets.QApplication.translate("MainWindow", "Custom name", None, -1))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.liveplottingtab), QtWidgets.QApplication.translate("MainWindow", "Live Plotting", None, -1))
+        self.label_5.setText(QtWidgets.QApplication.translate("MainWindow", "From", None, -1))
+        self.label_6.setText(QtWidgets.QApplication.translate("MainWindow", "To", None, -1))
+        self.label_4.setText(QtWidgets.QApplication.translate("MainWindow", "Filepath Recording", None, -1))
+        self.filepathtoolbutton_2.setText(QtWidgets.QApplication.translate("MainWindow", "...", None, -1))
+        self.customnamecheckbox_2.setText(QtWidgets.QApplication.translate("MainWindow", "Custom Name", None, -1))
+        self.autoopenfilecheckbox.setText(QtWidgets.QApplication.translate("MainWindow", "Auto Open", None, -1))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.samplingtab), QtWidgets.QApplication.translate("MainWindow", "Sampling", None, -1))
+        self.label_7.setText(QtWidgets.QApplication.translate("MainWindow", "Action Type", None, -1))
+        self.label_8.setText(QtWidgets.QApplication.translate("MainWindow", "Operator", None, -1))
+        self.label_9.setText(QtWidgets.QApplication.translate("MainWindow", "Temperature", None, -1))
+        self.stopmonitorbutton.setText(QtWidgets.QApplication.translate("MainWindow", "Stop", None, -1))
+        self.monitoringlabel.setText(QtWidgets.QApplication.translate("MainWindow", "Monitoring", None, -1))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.handlerstab), QtWidgets.QApplication.translate("MainWindow", "Handlers", None, -1))
+        self.menuFile.setTitle(QtWidgets.QApplication.translate("MainWindow", "File", None, -1))
+        self.menuSettings.setTitle(QtWidgets.QApplication.translate("MainWindow", "Electro", None, -1))
+        self.menuPlotting.setTitle(QtWidgets.QApplication.translate("MainWindow", "Plotting", None, -1))
+        self.menuEdit.setTitle(QtWidgets.QApplication.translate("MainWindow", "Edit", None, -1))
+        self.toolBar.setWindowTitle(QtWidgets.QApplication.translate("MainWindow", "toolBar", None, -1))
+        self.actionOpen_Plot_File.setText(QtWidgets.QApplication.translate("MainWindow", "Open Plot File", None, -1))
+        self.actionClose.setText(QtWidgets.QApplication.translate("MainWindow", "Close", None, -1))
+        self.actionopen_settings.setText(QtWidgets.QApplication.translate("MainWindow", "Settings", None, -1))
+        self.actionStart_Plotting.setText(QtWidgets.QApplication.translate("MainWindow", "Start Plotting", None, -1))
+        self.actionPlottings_UI.setText(QtWidgets.QApplication.translate("MainWindow", "Plottings UI (exp)", None, -1))
+        self.actionRefresh_Devices.setText(QtWidgets.QApplication.translate("MainWindow", "Refresh Devices", None, -1))
+        self.actionClear_Device_List.setText(QtWidgets.QApplication.translate("MainWindow", "Clear Device List", None, -1))
+        self.actionRestore_All.setText(QtWidgets.QApplication.translate("MainWindow", "Restore All", None, -1))
+        self.actionRestore_All.setToolTip(QtWidgets.QApplication.translate("MainWindow", "Restore all tab settings to default", None, -1))
+        self.actionRestore_Tab.setText(QtWidgets.QApplication.translate("MainWindow", "Restore Tab", None, -1))
+        self.actionRestore_Tab.setToolTip(QtWidgets.QApplication.translate("MainWindow", "Restore the selected tab to default", None, -1))
 
 import ElectroRes_rc

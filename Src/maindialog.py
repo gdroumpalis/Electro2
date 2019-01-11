@@ -1,7 +1,7 @@
 from pickle import FALSE
 
-from PyQt5.QtCore import QSize
-from PyQt5.QtWidgets import QWidget, QApplication, QMainWindow, QListWidgetItem, QMessageBox, QFileDialog
+from PySide2.QtCore import QSize
+from PySide2.QtWidgets import QWidget, QApplication, QMainWindow, QListWidgetItem, QMessageBox, QFileDialog
 import UI.mainui
 from Utilities.GlobalUtilities import *
 from Sources.settingsdialog import SettingUI
