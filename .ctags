@@ -1,4 +1,5 @@
 --exclude=venv/*
 --exclude=Resources/*
+--exlude=__pycache__/*
 
 
