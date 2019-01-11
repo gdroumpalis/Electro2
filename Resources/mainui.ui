@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>718</width>
-    <height>521</height>
+    <width>943</width>
+    <height>712</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -115,7 +115,7 @@
        <bool>true</bool>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="liveplottingtab">
        <attribute name="title">
@@ -567,7 +567,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>718</width>
+     <width>943</width>
      <height>26</height>
     </rect>
    </property>
