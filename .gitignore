@@ -25,3 +25,4 @@ venv.bak/
 devices.txt
 settings
 log.txt
+__pycache__/

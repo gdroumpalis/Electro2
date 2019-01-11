@@ -4,7 +4,7 @@ from PySide2.QtCore import QSize
 from PySide2.QtWidgets import QWidget, QApplication, QMainWindow, QListWidgetItem, QMessageBox, QFileDialog
 import UI.mainui
 from Utilities.GlobalUtilities import *
-from Sources.settingsdialog import SettingUI
+#from Src.settingsdialog import SettingUI
 from subprocess import check_call, call, Popen
 import os
 import uuid
@@ -107,7 +107,7 @@ class MainUI(QMainWindow):
 
     def connectuicomponetstosignal(self):
         connect(self.ui.actionClose.triggered, self.closeapplication)
-        connect(self.ui.actionopen_settings.triggered, self.opensettingsdialog)
+        #connect(self.ui.actionopen_settings.triggered, self.opensettingsdialog)
         connect(self.ui.actionRefresh_Devices.triggered, self.initializeelectro)
         connect(self.ui.actionClear_Device_List.triggered, self.fillcombowithnone)
         connect(self.ui.filepathtoolbutton.clicked, self.selectfilepath)
@@ -142,9 +142,9 @@ class MainUI(QMainWindow):
     def closeapplication(self):
         self.close()
 
-    def opensettingsdialog(self):
-        settingsdialog = SettingUI(maindlg=self)
-        ShowDialog(settingsdialog)
+#    def opensettingsdialog(self):
+#        settingsdialog = SettingUI(maindlg=self)
+#        ShowDialog(settingsdialog)
 
     def initializeelectro(self):
         check_call("dmesg | grep tty|grep USB|rev|awk '{print $1}'|rev > devices.txt", shell=True)

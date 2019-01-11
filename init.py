@@ -2,7 +2,7 @@ import sys
 import pathlib
 from PySide2.QtWidgets import QApplication
 
-from Sources.maindialog import MainUI
+from Src.maindialog import MainUI
 
 def getinitarguments() -> bool:
     if len(sys.argv) > 1 and "rasp" in sys.argv:

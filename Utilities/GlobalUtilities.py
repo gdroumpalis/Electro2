@@ -1,6 +1,6 @@
 from enum import Enum
 
-from PySide.QtWidgets import QAction, QPushButton, QAbstractButton
+from PySide2.QtWidgets import QAction, QPushButton, QAbstractButton
 
 
 def connect(signal, method):
