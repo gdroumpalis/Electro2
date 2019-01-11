@@ -36,29 +36,20 @@ class ElectroAction(Enum):
 filename2 = ""
 filename = ""
 
+
 class MainUI(QMainWindow):
-    RunsOnRaspberry = False
 
-    def __init__(self, rasp, initfilepath):
-        """
+    def __init__(self,  initfilepath):
 
-        :type runsonraspberry: bool
-        """
         super().__init__()
         self.initfilepath = initfilepath
         self.monitorthread = None
         self.ui = UI.mainui.Ui_MainWindow()
-        MainUI.RunsOnRaspberry = rasp
         self.ui.setupUi(self)
-        self.initializeMainWindowSize()
         self.initializeelectro()
         self.connectuicomponetstosignal()
         self.attachkeyboardshortcuts()
         self.initializewidgets()
-
-    def initializeMainWindowSize(self):
-        if not MainUI.RunsOnRaspberry:
-            self.resize(QSize(1600, 900))
 
     def initializewidgets(self):
         self.initializeliveplottingtab()
@@ -70,10 +61,14 @@ class MainUI(QMainWindow):
         self.ui.printedmessage.clear()
         self.ui.electroactions.clear()
         self.ui.handleractiontype.clear()
-        self.ui.handleractiontype.addItem("Shell Script", HandlerIndex.Shell.value)
-        self.ui.handleractiontype.addItem("Electro Action", HandlerIndex.Electro.value)
-        self.ui.electroactions.addItem("Print Message", ElectroAction.PrintMessage.value)
-        self.ui.electroactions.addItem("Terminate Connection", ElectroAction.Terminate.value)
+        self.ui.handleractiontype.addItem(
+            "Shell Script", HandlerIndex.Shell.value)
+        self.ui.handleractiontype.addItem(
+            "Electro Action", HandlerIndex.Electro.value)
+        self.ui.electroactions.addItem(
+            "Print Message", ElectroAction.PrintMessage.value)
+        self.ui.electroactions.addItem(
+            "Terminate Connection", ElectroAction.Terminate.value)
         self.ui.electroactions.setVisible(False)
         self.ui.handleractiontype.setCurrentIndex(HandlerIndex.Shell.value)
         self.ui.temperaturespinbox.setValue(0)
@@ -109,17 +104,22 @@ class MainUI(QMainWindow):
         connect(self.ui.actionClose.triggered, self.closeapplication)
         #connect(self.ui.actionopen_settings.triggered, self.opensettingsdialog)
         connect(self.ui.actionRefresh_Devices.triggered, self.initializeelectro)
-        connect(self.ui.actionClear_Device_List.triggered, self.fillcombowithnone)
+        connect(self.ui.actionClear_Device_List.triggered,
+                self.fillcombowithnone)
         connect(self.ui.filepathtoolbutton.clicked, self.selectfilepath)
         connect(self.ui.filepathtoolbutton_2.clicked, self.selecteddevice2)
-        connect(self.ui.customnamecheckbox.clicked, self.setcustomfilenameenabled)
-        connect(self.ui.customnamecheckbox_2.clicked, self.setcustomfilenameenabled2)
+        connect(self.ui.customnamecheckbox.clicked,
+                self.setcustomfilenameenabled)
+        connect(self.ui.customnamecheckbox_2.clicked,
+                self.setcustomfilenameenabled2)
         connect(self.ui.actionStart_Plotting.triggered, self.startmainproc)
         connect(self.ui.filecheckbox.clicked, self.setfilepathenabled)
         connect(self.ui.actionRestore_Tab.triggered, self.restoretaboptions)
         connect(self.ui.actionRestore_All.triggered, self.restorealloptions)
-        connect(self.ui.actionOpen_Plot_File.triggered, self.offlinerenderopenedplotfile)
-        connect(self.ui.handleractiontype.currentIndexChanged, self.handlerindexchanged)
+        connect(self.ui.actionOpen_Plot_File.triggered,
+                self.offlinerenderopenedplotfile)
+        connect(self.ui.handleractiontype.currentIndexChanged,
+                self.handlerindexchanged)
         connect(self.ui.stopmonitorbutton.clicked, self.stopmonitorthread)
 
     def handlerindexchanged(self):
@@ -147,7 +147,8 @@ class MainUI(QMainWindow):
 #        ShowDialog(settingsdialog)
 
     def initializeelectro(self):
-        check_call("dmesg | grep tty|grep USB|rev|awk '{print $1}'|rev > devices.txt", shell=True)
+        check_call(
+            "dmesg | grep tty|grep USB|rev|awk '{print $1}'|rev > devices.txt", shell=True)
         with open("devices.txt", "r") as f:
             devices = f.readlines()
         if len(devices) > 0:
@@ -168,22 +169,26 @@ class MainUI(QMainWindow):
         self.ui.selecteddevicecombobox.clear()
 
     def selectfilepath(self):
-        self.ui.filepathlineedit.setText(str(QFileDialog.getExistingDirectory(self, "Select Save path")))
+        self.ui.filepathlineedit.setText(
+            str(QFileDialog.getExistingDirectory(self, "Select Save path")))
 
     def selecteddevice2(self):
-        self.ui.filepathlineedit_2.setText(str(QFileDialog.getExistingDirectory(self, "Select Save path")))
+        self.ui.filepathlineedit_2.setText(
+            str(QFileDialog.getExistingDirectory(self, "Select Save path")))
 
     def setcustomfilenameenabled2(self):
         self.ui.filename2.setEnabled(self.ui.customnamecheckbox_2.isChecked())
 
     def setcustomfilenameenabled(self):
-        self.ui.filename.setEnabled(self.ui.customnamecheckbox.isChecked() & self.ui.filecheckbox.isChecked())
+        self.ui.filename.setEnabled(
+            self.ui.customnamecheckbox.isChecked() & self.ui.filecheckbox.isChecked())
 
     def setfilepathenabled(self):
         self.ui.filepathlineedit.setEnabled(self.ui.filecheckbox.isChecked())
         self.ui.filepathtoolbutton.setEnabled(self.ui.filecheckbox.isChecked())
         self.ui.customnamecheckbox.setEnabled(self.ui.filecheckbox.isChecked())
-        self.ui.filename.setEnabled(self.ui.filecheckbox.isChecked() and self.ui.customnamecheckbox.isChecked())
+        self.ui.filename.setEnabled(
+            self.ui.filecheckbox.isChecked() and self.ui.customnamecheckbox.isChecked())
 
     def startmainproc(self):
         if self.ui.selecteddevicecombobox.findText("None"):
@@ -217,7 +222,8 @@ class MainUI(QMainWindow):
                     "None", "True", str(self.ui.autoopenfilecheckbox.isChecked())])
 
     def startmonitoring(self):
-        ser = serial.Serial(self.ui.selecteddevicecombobox.currentText(), self.ui.speedspinbox.text(), timeout=0.15)
+        ser = serial.Serial(self.ui.selecteddevicecombobox.currentText(
+        ), self.ui.speedspinbox.text(), timeout=0.15)
         self.ui.monitoringlabel.setVisible(True)
         try:
             from Renderer.MRenderer import RenderingThreadLooper
@@ -227,9 +233,8 @@ class MainUI(QMainWindow):
                                                                                  operator=self.ui.operatorcombo.currentIndex(),
                                                                                  threshold=self.ui.temperaturespinbox.value(),
                                                                                  message=self.ui.printedmessage.text(),
-                                                                                 shell=self.ui.shellaction.text())
-                                                                                , name="Monitoring Thread" ,
-                                                    onfinishexecution=lambda: self.ui.monitoringlabel.setVisible(False) )
+                                                                                 shell=self.ui.shellaction.text()), name="Monitoring Thread",
+                                                  onfinishexecution=lambda: self.ui.monitoringlabel.setVisible(False))
             self.monitorthread = monitorthread
             monitorthread.run()
 
@@ -241,17 +246,19 @@ class MainUI(QMainWindow):
         if self.monitorthread is not None:
             self.monitorthread.finishexecution()
 
-    def executemonitoring(self, ser, thread, action, handleroperation ,operator, threshold, message="", shell=""):
+    def executemonitoring(self, ser, thread, action, handleroperation, operator, threshold, message="", shell=""):
         try:
             value = float(ser.readline())
 
             if operator == Operator.Greater.value:
                 if value > threshold:
-                    self.executioncase(action=action, handleroperation=handleroperation ,thread=thread, message=message, shell=shell)
+                    self.executioncase(action=action, handleroperation=handleroperation,
+                                       thread=thread, message=message, shell=shell)
 
             if operator == Operator.Lesser.value:
                 if value < threshold:
-                    self.executioncase(action= action,handleroperation=handleroperation ,thread=thread, message=message, shell=shell)
+                    self.executioncase(action=action, handleroperation=handleroperation,
+                                       thread=thread, message=message, shell=shell)
 
             print(float(ser.readline()))
         except:
@@ -260,7 +267,7 @@ class MainUI(QMainWindow):
     def executioncase(self, action, handleroperation, thread, message="", shell=""):
         if handleroperation == HandlerIndex.Shell.value:
             print("entered "+shell)
-            call(shell , shell=True)
+            call(shell, shell=True)
             thread.finishexecution()
         elif action == ElectroAction.PrintMessage.value:
             print(message)
@@ -269,10 +276,7 @@ class MainUI(QMainWindow):
             thread.finishexecution()
 
     def getpythonversion(self) -> str:
-        if MainUI.RunsOnRaspberry:
-            return "python3"
-        else:
-            return "python35"
+        return "python3"
 
     def showmessagebox(self, message):
         msg = QMessageBox()
@@ -297,19 +301,23 @@ class MainUI(QMainWindow):
     def getcompbinedfilename(self):
         global filename
         if self.ui.customnamecheckbox.isChecked():
-            filename = os.path.join(self.ui.filepathlineedit.text(), self.ui.filename.text())
+            filename = os.path.join(
+                self.ui.filepathlineedit.text(), self.ui.filename.text())
             return filename
         else:
-            filename = os.path.join(self.ui.filepathlineedit.text(), "liveplottinglogging{0}.txt".format(uuid.uuid4()))
+            filename = os.path.join(self.ui.filepathlineedit.text(
+            ), "liveplottinglogging{0}.txt".format(uuid.uuid4()))
             return filename
 
     def getcompbinedfilename2(self):
         global filename2
         if self.ui.customnamecheckbox_2.isChecked():
-            filename2 = os.path.join(self.ui.filepathlineedit_2.text(), self.ui.filename2.text())
+            filename2 = os.path.join(
+                self.ui.filepathlineedit_2.text(), self.ui.filename2.text())
             return filename2
         else:
-            filename2 = os.path.join(self.ui.filepathlineedit_2.text(), "sampling{0}.txt".format(uuid.uuid4()))
+            filename2 = os.path.join(
+                self.ui.filepathlineedit_2.text(), "sampling{0}.txt".format(uuid.uuid4()))
             return filename2
 
     def offlinerenderopenedplotfile(self):
