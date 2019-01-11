@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'Resources/mainui.ui',
 # licensing of 'Resources/mainui.ui' applies.
 #
-# Created: Fri Jan 11 20:22:40 2019
+# Created: Fri Jan 11 20:45:52 2019
 #      by: pyside2-uic  running on PySide2 5.12.0
 #
 # WARNING! All changes made in this file will be lost!
@@ -412,7 +412,7 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QtWidgets.QApplication.translate("MainWindow", "Electro", None, -1))
+        MainWindow.setWindowTitle(QtWidgets.QApplication.translate("MainWindow", "Electro 2", None, -1))
         self.horizontalGroupBox.setTitle(QtWidgets.QApplication.translate("MainWindow", "USB and Plotting Settings", None, -1))
         self.label.setText(QtWidgets.QApplication.translate("MainWindow", "USB Device", None, -1))
         self.label_2.setText(QtWidgets.QApplication.translate("MainWindow", "Speed", None, -1))
