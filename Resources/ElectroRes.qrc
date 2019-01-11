@@ -1,0 +1,32 @@
+<RCC>
+  <qresource prefix="open">
+    <file>Icons/open.png</file>
+  </qresource>
+  <qresource prefix="restoreall">
+    <file>Icons/restoreall.png</file>
+  </qresource>
+  <qresource prefix="restoretab">
+    <file>Icons/restoretab.png</file>
+  </qresource>
+  <qresource prefix="plot">
+    <file>Icons/plot.png</file>
+  </qresource>
+  <qresource prefix="clear">
+    <file>Icons/clear.png</file>
+  </qresource>
+  <qresource prefix="refresh">
+    <file>Icons/refresh.png</file>
+  </qresource>
+  <qresource prefix="settings">
+    <file>Icons/settings.png</file>
+  </qresource>
+  <qresource prefix="plotsettings">
+    <file>Icons/plotsettings.png</file>
+  </qresource>
+  <qresource prefix="start">
+    <file>Icons/start.png</file>
+  </qresource>
+  <qresource prefix="close">
+    <file>Icons/close.png</file>
+  </qresource>
+</RCC>
