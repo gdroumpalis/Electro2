@@ -9,12 +9,4 @@ class SettingUI(QDialog):
         self.ui = Ui_Settings()
         self.ui.setupUi(self)
         self.maindlg = maindlg
-        # self.initializedevicesfromfile()
-        # connect(self.ui.usbdevicesdropdown.currentTextChanged , self.updateselecteddevice )
 
-    # def initializedevicesfromfile(self):
-    #     for device in self.maindlg.devices:
-    #         self.ui.usbdevicesdropdown.addItem(device)
-    #
-    # def updateselecteddevice(self):
-    #     self.maindlg.selecteddevice = self.ui.usbdevicesdropdown.currentText()
