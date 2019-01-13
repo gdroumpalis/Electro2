@@ -1,12 +1,14 @@
-from enum import Enum
+from PySide2.QtWidgets import QAction, QPushButton, QAbstractButton,QMessageBox
 
-from PySide2.QtWidgets import QAction, QPushButton, QAbstractButton
-
-
-def connect(signal, method):
+def make_connection(signal, method):
     signal.connect(method)
 
-def ShowDialog(dialog):
+def show_dialog(dialog):
     dialog.exec_()
     dialog.show()
 
+def show_message(message):
+    msg = QMessageBox()
+    msg.setText(message)
+    msg.setIcon(QMessageBox.Information)
+    msg.exec_()

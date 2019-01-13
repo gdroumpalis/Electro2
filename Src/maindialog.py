@@ -1,37 +1,12 @@
-from pickle import FALSE
-
 from PySide2.QtCore import QSize
 from PySide2.QtWidgets import QWidget, QApplication, QMainWindow, QListWidgetItem, QMessageBox, QFileDialog
 import UI.mainui
 from Utilities.GlobalUtilities import *
-#from Src.settingsdialog import SettingUI
 from subprocess import check_call, call, Popen
 import os
 import uuid
 import serial
-
-
-class RendererOperationsType(Enum):
-    LivePlotting = 1
-    Sampling = 2
-    Handling = 3
-    OfflineRendering = 4
-
-
-class HandlerIndex(Enum):
-    Shell = 0
-    Electro = 1
-
-
-class Operator(Enum):
-    Greater = 0
-    Lesser = 1
-
-
-class ElectroAction(Enum):
-    PrintMessage = 0
-    Terminate = 1
-
+from Utilities.Enums import *
 
 filename2 = ""
 filename = ""
@@ -46,18 +21,18 @@ class MainUI(QMainWindow):
         self.monitorthread = None
         self.ui = UI.mainui.Ui_MainWindow()
         self.ui.setupUi(self)
-        self.initializeelectro()
-        self.connectuicomponetstosignal()
-        self.attachkeyboardshortcuts()
-        self.initializewidgets()
+        self.initialize_electro()
+        self.make_connections()
+        self.attach_keyboard_shortcuts()
+        self.initialize_widgets()
 
-    def initializewidgets(self):
-        self.initializeliveplottingtab()
-        self.initializesamplingtab()
-        self.initializehandlertab()
+    def initialize_widgets(self):
+        self.initialize_liveplot_tab()
+        self.initialize_sampling_tab()
+        self.initialize_handling_tab()
 
-    def initializehandlertab(self):
-        self.stopmonitorthread()
+    def initialize_handling_tab(self):
+        self.stop_monitoring_thread()
         self.ui.printedmessage.clear()
         self.ui.electroactions.clear()
         self.ui.handleractiontype.clear()
@@ -79,7 +54,7 @@ class MainUI(QMainWindow):
         self.ui.temperaturespinbox.setValue(50)
         self.ui.monitoringlabel.setVisible(False)
 
-    def initializesamplingtab(self):
+    def initialize_sampling_tab(self):
         self.ui.customnamecheckbox_2.setChecked(False)
         self.ui.filename2.setEnabled(False)
         self.ui.filepathtoolbutton.setEnabled(False)
@@ -89,7 +64,7 @@ class MainUI(QMainWindow):
         self.ui.filename2.clear()
         self.ui.autoopenfilecheckbox.setChecked(False)
 
-    def initializeliveplottingtab(self):
+    def initialize_liveplot_tab(self):
         self.ui.filecheckbox.setChecked(False)
         self.ui.loggingcheckbox.setChecked(False)
         self.ui.customnamecheckbox.setEnabled(False)
@@ -100,29 +75,29 @@ class MainUI(QMainWindow):
         self.ui.filepathlineedit.setEnabled(False)
         self.ui.filepathlineedit.clear()
 
-    def connectuicomponetstosignal(self):
-        connect(self.ui.actionClose.triggered, self.closeapplication)
+    def make_connections(self):
+        make_connection(self.ui.actionClose.triggered, self.close_application)
         #connect(self.ui.actionopen_settings.triggered, self.opensettingsdialog)
-        connect(self.ui.actionRefresh_Devices.triggered, self.initializeelectro)
-        connect(self.ui.actionClear_Device_List.triggered,
-                self.fillcombowithnone)
-        connect(self.ui.filepathtoolbutton.clicked, self.selectfilepath)
-        connect(self.ui.filepathtoolbutton_2.clicked, self.selecteddevice2)
-        connect(self.ui.customnamecheckbox.clicked,
-                self.setcustomfilenameenabled)
-        connect(self.ui.customnamecheckbox_2.clicked,
-                self.setcustomfilenameenabled2)
-        connect(self.ui.actionStart_Plotting.triggered, self.startmainproc)
-        connect(self.ui.filecheckbox.clicked, self.setfilepathenabled)
-        connect(self.ui.actionRestore_Tab.triggered, self.restoretaboptions)
-        connect(self.ui.actionRestore_All.triggered, self.restorealloptions)
-        connect(self.ui.actionOpen_Plot_File.triggered,
-                self.offlinerenderopenedplotfile)
-        connect(self.ui.handleractiontype.currentIndexChanged,
-                self.handlerindexchanged)
-        connect(self.ui.stopmonitorbutton.clicked, self.stopmonitorthread)
+        make_connection(self.ui.actionRefresh_Devices.triggered, self.initialize_electro)
+        make_connection(self.ui.actionClear_Device_List.triggered,
+                self.fill_combo_with_none)
+        make_connection(self.ui.filepathtoolbutton.clicked, self.select_file_path)
+        make_connection(self.ui.filepathtoolbutton_2.clicked, self.select_file_path2)
+        make_connection(self.ui.customnamecheckbox.clicked,
+                self.custom_file_name_enabled)
+        make_connection(self.ui.customnamecheckbox_2.clicked,
+                self.custom_file_name_enabled2)
+        make_connection(self.ui.actionStart_Plotting.triggered, self.start_main_procedure)
+        make_connection(self.ui.filecheckbox.clicked, self.file_path_enabled)
+        make_connection(self.ui.actionRestore_Tab.triggered, self.restore_tab_options)
+        make_connection(self.ui.actionRestore_All.triggered, self.restore_all_options)
+        make_connection(self.ui.actionOpen_Plot_File.triggered,
+                self.render_plot_file)
+        make_connection(self.ui.handleractiontype.currentIndexChanged,
+                self.handler_index_changed)
+        make_connection(self.ui.stopmonitorbutton.clicked, self.stop_monitoring_thread)
 
-    def handlerindexchanged(self):
+    def handler_index_changed(self):
         if self.ui.handleractiontype.currentIndex() == HandlerIndex.Shell.value:
             self.ui.electroactions.setVisible(False)
             self.ui.shellaction.setVisible(True)
@@ -134,100 +109,100 @@ class MainUI(QMainWindow):
         else:
             pass
 
-    def attachkeyboardshortcuts(self):
+    def attach_keyboard_shortcuts(self):
         self.ui.actionClose.setShortcut("ctrl+q")
         self.ui.actionopen_settings.setShortcut("ctrl+p")
         self.ui.actionRefresh_Devices.setShortcut("ctrl+shift+r")
 
-    def closeapplication(self):
+    def close_application(self):
         self.close()
 
 #    def opensettingsdialog(self):
 #        settingsdialog = SettingUI(maindlg=self)
 #        ShowDialog(settingsdialog)
 
-    def initializeelectro(self):
+    def initialize_electro(self):
         check_call(
             "dmesg | grep tty|grep USB|rev|awk '{print $1}'|rev > devices.txt", shell=True)
         with open("devices.txt", "r") as f:
             devices = f.readlines()
         if len(devices) > 0:
-            self.clearcombo()
+            self.clear_combo()
             for dev in devices:
-                self.deviceaddtocombo(dev)
+                self.add_device_to_combo(dev)
         else:
-            self.fillcombowithnone()
+            self.fill_combo_with_none()
 
-    def deviceaddtocombo(self, dev):
+    def add_device_to_combo(self, dev):
         self.ui.selecteddevicecombobox.addItem("/dev/" + dev.replace("\n", ""))
 
-    def fillcombowithnone(self):
-        self.clearcombo()
+    def fill_combo_with_none(self):
+        self.clear_combo()
         self.ui.selecteddevicecombobox.addItem("None")
 
-    def clearcombo(self):
+    def clear_combo(self):
         self.ui.selecteddevicecombobox.clear()
 
-    def selectfilepath(self):
+    def select_file_path(self):
         self.ui.filepathlineedit.setText(
             str(QFileDialog.getExistingDirectory(self, "Select Save path")))
 
-    def selecteddevice2(self):
+    def select_file_path2(self):
         self.ui.filepathlineedit_2.setText(
             str(QFileDialog.getExistingDirectory(self, "Select Save path")))
 
-    def setcustomfilenameenabled2(self):
+    def custom_file_name_enabled2(self):
         self.ui.filename2.setEnabled(self.ui.customnamecheckbox_2.isChecked())
 
-    def setcustomfilenameenabled(self):
+    def custom_file_name_enabled(self):
         self.ui.filename.setEnabled(
             self.ui.customnamecheckbox.isChecked() & self.ui.filecheckbox.isChecked())
 
-    def setfilepathenabled(self):
+    def file_path_enabled(self):
         self.ui.filepathlineedit.setEnabled(self.ui.filecheckbox.isChecked())
         self.ui.filepathtoolbutton.setEnabled(self.ui.filecheckbox.isChecked())
         self.ui.customnamecheckbox.setEnabled(self.ui.filecheckbox.isChecked())
         self.ui.filename.setEnabled(
             self.ui.filecheckbox.isChecked() and self.ui.customnamecheckbox.isChecked())
 
-    def startmainproc(self):
+    def start_main_procedure(self):
         if self.ui.selecteddevicecombobox.findText("None"):
             if self.ui.monitoringlabel.isVisible():
                 return
             selectedtab = self.ui.tabWidget.currentWidget()
             if selectedtab is self.ui.liveplottingtab:
-                self.startliveplotting()
+                self.start_liveplotting()
             elif selectedtab is self.ui.samplingtab:
-                self.startsampling()
+                self.start_sampling()
             elif selectedtab is self.ui.handlerstab:
-                self.startmonitoring()
+                self.start_monitoring()
             else:
                 print("unknown tab selected")
         else:
-            self.showmessagebox("There is no proper device selected")
+            show_message("There is no proper device selected")
 
-    def startliveplotting(self):
+    def start_liveplotting(self):
         if self.ui.liveplottingcheckbox.isChecked() or self.ui.loggingcheckbox.isChecked() or self.ui.filecheckbox.isChecked():
             print(__file__)
-            Popen([self.getpythonversion(), os.path.join(self.initfilepath, "Renderer/MRenderer.py"),
+            Popen([self.get_python_version(), os.path.join(self.initfilepath, "MRenderer.py"),
                    str(RendererOperationsType.LivePlotting.value), self.ui.selecteddevicecombobox.currentText(),
-                   self.ui.speedspinbox.text(), self.getcompbinedfilename(), "None",
+                   self.ui.speedspinbox.text(), self.get_combined_file_name(), "None",
                    str(self.ui.loggingcheckbox.isChecked()), str(self.ui.filecheckbox.isChecked()), "None"])
 
-    def startsampling(self):
+    def start_sampling(self):
         print(__file__)
-        check_call([self.getpythonversion(), os.path.join(self.initfilepath, "Renderer/MRenderer.py"),
+        check_call([self.get_python_version(), os.path.join(self.initfilepath, "MRenderer.py"),
                     str(RendererOperationsType.Sampling.value), self.ui.selecteddevicecombobox.currentText(),
-                    self.ui.speedspinbox.text(), self.getcompbinedfilename2(), self.ui.tospinbox.text(),
+                    self.ui.speedspinbox.text(), self.get_combined_file_name2(), self.ui.tospinbox.text(),
                     "None", "True", str(self.ui.autoopenfilecheckbox.isChecked())])
 
-    def startmonitoring(self):
+    def start_monitoring(self):
         ser = serial.Serial(self.ui.selecteddevicecombobox.currentText(
         ), self.ui.speedspinbox.text(), timeout=0.15)
         self.ui.monitoringlabel.setVisible(True)
         try:
-            from Renderer.MRenderer import RenderingThreadLooper
-            monitorthread = RenderingThreadLooper(lambda: self.executemonitoring(ser, thread=self.monitorthread,
+            from Src.electro_threading import ThreadLooper
+            monitorthread = ThreadLooper(lambda: self.execute_monitoring(ser, thread=self.monitorthread,
                                                                                  action=self.ui.electroactions.currentIndex(),
                                                                                  handleroperation=self.ui.handleractiontype.currentIndex(),
                                                                                  operator=self.ui.operatorcombo.currentIndex(),
@@ -241,64 +216,58 @@ class MainUI(QMainWindow):
         finally:
             pass  # ser.close()
 
-    def stopmonitorthread(self):
+    def stop_monitoring_thread(self):
         self.ui.monitoringlabel.setVisible(False)
         if self.monitorthread is not None:
-            self.monitorthread.finishexecution()
+            self.monitorthread.finish_execution()
 
-    def executemonitoring(self, ser, thread, action, handleroperation, operator, threshold, message="", shell=""):
+    def execute_monitoring(self, ser, thread, action, handleroperation, operator, threshold, message="", shell=""):
         try:
             value = float(ser.readline())
 
             if operator == Operator.Greater.value:
                 if value > threshold:
-                    self.executioncase(action=action, handleroperation=handleroperation,
+                    self.execution_by_case(action=action, handleroperation=handleroperation,
                                        thread=thread, message=message, shell=shell)
 
             if operator == Operator.Lesser.value:
                 if value < threshold:
-                    self.executioncase(action=action, handleroperation=handleroperation,
+                    self.execution_by_case(action=action, handleroperation=handleroperation,
                                        thread=thread, message=message, shell=shell)
 
             print(float(ser.readline()))
         except:
             pass
 
-    def executioncase(self, action, handleroperation, thread, message="", shell=""):
+    def execution_by_case(self, action, handleroperation, thread, message="", shell=""):
         if handleroperation == HandlerIndex.Shell.value:
             print("entered "+shell)
             call(shell, shell=True)
-            thread.finishexecution()
+            thread.finish_execution()
         elif action == ElectroAction.PrintMessage.value:
             print(message)
-            thread.finishexecution()
+            thread.finish_execution()
         elif action == ElectroAction.Terminate.value:
-            thread.finishexecution()
+            thread.finish_execution()
 
-    def getpythonversion(self) -> str:
+    def get_python_version(self) -> str:
         return "python3"
 
-    def showmessagebox(self, message):
-        msg = QMessageBox()
-        msg.setText(message)
-        msg.setIcon(QMessageBox.Information)
-        msg.exec_()
+    def restore_all_options(self):
+        self.initialize_widgets()
 
-    def restorealloptions(self):
-        self.initializewidgets()
-
-    def restoretaboptions(self):
+    def restore_tab_options(self):
         selectedtab = self.ui.tabWidget.currentWidget()
         if selectedtab is self.ui.liveplottingtab:
-            self.initializeliveplottingtab()
+            self.initialize_liveplot_tab()
         elif selectedtab is self.ui.samplingtab:
-            self.initializesamplingtab()
+            self.initialize_sampling_tab()
         elif selectedtab is self.ui.handlerstab:
-            self.initializehandlertab()
+            self.initialize_handling_tab()
         else:
             print("unknown tab selected")
 
-    def getcompbinedfilename(self):
+    def get_combined_file_name(self):
         global filename
         if self.ui.customnamecheckbox.isChecked():
             filename = os.path.join(
@@ -309,7 +278,7 @@ class MainUI(QMainWindow):
             ), "liveplottinglogging{0}.txt".format(uuid.uuid4()))
             return filename
 
-    def getcompbinedfilename2(self):
+    def get_combined_file_name2(self):
         global filename2
         if self.ui.customnamecheckbox_2.isChecked():
             filename2 = os.path.join(
@@ -320,12 +289,11 @@ class MainUI(QMainWindow):
                 self.ui.filepathlineedit_2.text(), "sampling{0}.txt".format(uuid.uuid4()))
             return filename2
 
-    def offlinerenderopenedplotfile(self):
+    def render_plot_file(self):
         file, _ = QFileDialog.getOpenFileName(self, "QFileDialog.getOpenFileNames()", "",
                                               "All Files (*)")
         if file:
-            print(file)
-            check_call([self.getpythonversion(), os.path.join(self.initfilepath, "Renderer/MRenderer.py"),
+            check_call([self.get_python_version(), os.path.join(self.initfilepath, "MRenderer.py"),
                         str(RendererOperationsType.OfflineRendering.value),
                         self.ui.selecteddevicecombobox.currentText(),
                         self.ui.speedspinbox.text(), file, "None",

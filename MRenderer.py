@@ -1,6 +1,5 @@
+import sys
 from audioop import avg
-from enum import Enum
-
 from numpy import *
 from pyqtgraph.Qt import QtGui, QtCore
 import pyqtgraph as pg
@@ -8,68 +7,29 @@ import serial
 import datetime
 import sys
 import os
-from threading import Thread
-
-
-class RenderingThreadLooper:
-
-    def __init__(self, target, timeout=-1, name="Processing_Thread" , onfinishexecution = None):
-        self.executing = True
-        self.runnablemethod = target
-        self.timeout = timeout
-        self.threadname = name
-        self.renderthread = None
-        self.onfinishexec = onfinishexecution
-
-    def executiontarget(self):
-        if self.timeout == -1:
-            while self.executing:
-                self.runnablemethod()
-        else:
-            for i in range(0, self.timeout):
-                self.runnablemethod()
-                print(i)
-
-    def finishexecution(self):
-        self.executing = False
-        if self.onfinishexec is not None:
-            self.onfinishexec()
-        print(self.renderthread.name + " finished")
-
-    def run(self):
-        self.renderthread = Thread(target=self.executiontarget)
-        self.renderthread.setName(self.threadname)
-        self.renderthread.start()
-        print(self.renderthread.name + " started")
-
-    def wait(self):
-        self.renderthread.join()
-
-
-class RendererOperationsType(Enum):
-    LivePlotting = 1
-    Sampling = 2
-    Handling = 3
-    OfflineRendering = 4
+from Src.electro_threading import  ThreadLooper
+from Utilities.Enums import RendererOperationsType
 
 
 if __name__ == '__main__':
-    def releaseresources():
+    def release_resources():
         global f, ser, loopers
+        print("Releasing resources")
         if f is not None:
             f.close()
         ser.close()
         for looper in loopers:
-            looper.finishexecution()
+            looper.finish_execution()
         del loopers[:]
+        print("Resources released")
 
 
-    def attachloopertogloballooperpool(looper):
+    def attach_to_global_thread_pool(looper):
         global loopers
         loopers.append(looper)
 
 
-    def GetOperationMethodFromArgs(argv: int) -> RendererOperationsType:
+    def GetOperationMethodFromArgs(argv: int):
         type = int(argv[1])
         if type == 1:
             return RendererOperationsType.LivePlotting
@@ -81,7 +41,7 @@ if __name__ == '__main__':
             return RendererOperationsType.OfflineRendering
 
 
-    def openfilewithproperfilename():
+    def open_file_with_proper_name():
         if GetFileLogging(sys.argv):
             return open(GetDefaultFilepath(sys.argv), "w+")
         else:
@@ -155,7 +115,7 @@ if __name__ == '__main__':
     autoofflinerender = GetAutoOfflineRendering(sys.argv)
     if RendererOperation != RendererOperationsType.OfflineRendering:
         ser = serial.Serial(devicename, baudrate, timeout=0.15)
-        f = openfilewithproperfilename()
+        f = open_file_with_proper_name()
     print(RendererOperation.name)
     ### START QtApp #####
     if RendererOperation == RendererOperationsType.LivePlotting or autoofflinerender or RendererOperation== RendererOperationsType.OfflineRendering:
@@ -173,11 +133,7 @@ if __name__ == '__main__':
 
 
     # Realtime data plot. Each time this function is called, the data display is updated
-    def updateforliveplottin(f, logging, filelogging, t):
-        """
-        :param t:
-        :type logging: bool
-        """
+    def live_plotting_execution_target(f, logging, filelogging, t):
         global curve, curve2, ptr, Xm, Am, ser
         Xm[:-1] = Xm[1:]  # shift data in the temporal mean 1 sample left
         Am[:-1] = Am[1:]
@@ -206,7 +162,7 @@ if __name__ == '__main__':
         QtGui.QApplication.processEvents()  # you MUST process the plot now
 
 
-    def updateforsampling(f):
+    def sampling_execution_target(f):
         global ptr, Xm, Am, ser
         Xm[:-1] = Xm[1:]  # shift data in the temporal mean 1 sample left
         Am[:-1] = Am[1:]
@@ -224,7 +180,7 @@ if __name__ == '__main__':
         ptr += 1  # update x position for displaying the curve
 
 
-    def updateforhandling(f):
+    def handling_execution_target(f):
         global curve, curve2, ptr, Xm, Am
         Xm[:-1] = Xm[1:]  # shift data in the temporal mean 1 sample left
         Am[:-1] = Am[1:]
@@ -266,15 +222,15 @@ if __name__ == '__main__':
 
 
     if RendererOperation == RendererOperationsType.LivePlotting:
-        renderlooper = RenderingThreadLooper(lambda: updateforliveplottin(f, terminallogging, filelogging, True),
+        renderlooper = ThreadLooper(lambda: live_plotting_execution_target(f, terminallogging, filelogging, True),
                                              name="Live Plotting Thread")
         renderlooper.run()
-        attachloopertogloballooperpool(renderlooper)
+        attach_to_global_thread_pool(renderlooper)
         print("Plotting Started")
 
     elif RendererOperation == RendererOperationsType.Sampling:
-        renderlooper = RenderingThreadLooper(lambda: updateforsampling(f), timeout=maxstep, name="Sampling Thread")
-        attachloopertogloballooperpool(renderlooper)
+        renderlooper = ThreadLooper(lambda: sampling_execution_target(f), timeout=maxstep, name="Sampling Thread")
+        attach_to_global_thread_pool(renderlooper)
         renderlooper.run()
         print("Sampling started")
         renderlooper.wait()
@@ -301,6 +257,6 @@ if __name__ == '__main__':
         print("UI Proccess Ended")
 
     try:
-        releaseresources()  # TODO do not forget to update releasesources method
+        release_resources()  # TODO do not forget to update releasesources method
     except:
         pass
