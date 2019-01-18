@@ -1,5 +1,5 @@
 -R
---exclude=venv/*
+--exclude=electro2_env/*
 --exclude=Resources/*
 --exclude=__pycache__/*
 

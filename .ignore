@@ -1,4 +1,4 @@
-venv/
+electro2_env/
 tags
 .ctags
 __pycache__/
