@@ -1,3 +1,5 @@
+from PySide2.QtWidgets import QMessageBox
+
 def make_connection(signal, method):
     signal.connect(method)
 
