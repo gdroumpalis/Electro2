@@ -3,33 +3,33 @@ class ThreadLooper:
 
     def __init__(self, target, timeout=-1, name="Processing_Thread" , onfinishexecution = None):
         self.executing = True
-        self.runnablemethod = target
+        self.execution_method = target
         self.timeout = timeout
-        self.threadname = name
-        self.renderthread = None
+        self.thread_name = name
+        self.render_thread = None
         self.onfinishexec = onfinishexecution
 
     def execution_target(self):
         if self.timeout == -1:
             while self.executing:
-                self.runnablemethod()
+                self.execution_method()
         else:
             for i in range(0, self.timeout):
-                self.runnablemethod()
+                self.execution_method()
                 print(i)
 
     def finish_execution(self):
         self.executing = False
         if self.onfinishexec is not None:
             self.onfinishexec()
-        print(self.renderthread.name + " finished")
+        print(self.render_thread.name + " finished")
 
     def run(self):
-        self.renderthread = Thread(target=self.execution_target)
-        self.renderthread.setName(self.threadname)
-        self.renderthread.start()
-        print(self.renderthread.name + " started")
+        self.render_thread = Thread(target=self.execution_target)
+        self.render_thread.setName(self.thread_name)
+        self.render_thread.start()
+        print(self.render_thread.name + " started")
 
     def wait(self):
-        self.renderthread.join()
+        self.render_thread.join()
 

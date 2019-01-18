@@ -15,7 +15,7 @@ class Ui_Settings(object):
         Settings.resize(452, 388)
         self.verticalLayout = QtWidgets.QVBoxLayout(Settings)
         self.verticalLayout.setObjectName("verticalLayout")
-        self.groupBox_2 = QtWidgets.QGroupBox(Settings)
+       self.groupBox_2 = QtWidgets.QGroupBox(Settings)
         self.groupBox_2.setObjectName("groupBox_2")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.groupBox_2)
         self.verticalLayout_3.setObjectName("verticalLayout_3")

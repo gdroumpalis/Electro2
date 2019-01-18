@@ -9,27 +9,14 @@ import sys
 import os
 from Src.electro_threading import  ThreadLooper
 from Utilities.Enums import RendererOperationsType
-
+from Utilities.GlobalUtilities import release_resources
 
 if __name__ == '__main__':
-    def release_resources():
-        global f, ser, loopers
-        print("Releasing resources")
-        if f is not None:
-            f.close()
-        ser.close()
-        for looper in loopers:
-            looper.finish_execution()
-        del loopers[:]
-        print("Resources released")
-
-
     def attach_to_global_thread_pool(looper):
-        global loopers
-        loopers.append(looper)
+        global thread_loopers
+        thread_loopers.append(looper)
 
-
-    def GetOperationMethodFromArgs(argv: int):
+    def get_operation_method(argv: int):
         type = int(argv[1])
         if type == 1:
             return RendererOperationsType.LivePlotting
@@ -42,38 +29,38 @@ if __name__ == '__main__':
 
 
     def open_file_with_proper_name():
-        if GetFileLogging(sys.argv):
-            return open(GetDefaultFilepath(sys.argv), "w+")
+        if get_file_loggin(sys.argv):
+            return open(get_default_filepath(sys.argv), "w+")
         else:
             return None
 
 
-    def GetDeviceName(argv):
+    def get_device_name(argv):
         return argv[2]
 
 
-    def GetBaudrate(argv):
+    def get_baudrate(argv):
         if argv[3] == "None":
             return 1200
         else:
             return int(argv[3])
 
 
-    def GetDefaultFilepath(argv):
+    def get_default_filepath(argv):
         if argv[4] == "None":
             return os.path.join(os.getcwd(), "sampling")
         else:
             return argv[4]
 
 
-    def GetDefaultMaxStep(argv):
+    def get_default_max_step(argv):
         if argv[5] == "None":
             return 200
         else:
             return int(argv[5])
 
 
-    def GetTerminalLogging(argv):
+    def get_terminal_logging(argv):
         if argv[6] == "None":
             return False
         else:
@@ -83,7 +70,7 @@ if __name__ == '__main__':
                 return False
 
 
-    def GetFileLogging(argv):
+    def get_file_loggin(argv):
         if argv[7] == "None":
             return False
         else:
@@ -93,7 +80,7 @@ if __name__ == '__main__':
                 return False
 
 
-    def GetAutoOfflineRendering(argv):
+    def get_auto_offline_rendering(argv):
         if argv[8] == "None":
             return False
         else:
@@ -103,22 +90,22 @@ if __name__ == '__main__':
                 return False
 
 
-    loopers = []
+    thread_loopers = []
     ser = 0
-    RendererOperation = GetOperationMethodFromArgs(sys.argv)  # type: RendererOperationsType
-    terminallogging = GetTerminalLogging(sys.argv)
-    filelogging = GetFileLogging(sys.argv)
-    devicename = GetDeviceName(sys.argv)
-    baudrate = GetBaudrate(sys.argv)
-    filename = GetDefaultFilepath(sys.argv)
-    maxstep = GetDefaultMaxStep(sys.argv)
-    autoofflinerender = GetAutoOfflineRendering(sys.argv)
+    RendererOperation = get_operation_method(sys.argv)  # type: RendererOperationsType
+    terminal_logging = get_terminal_logging(sys.argv)
+    file_logging = get_file_loggin(sys.argv)
+    device_name = get_device_name(sys.argv)
+    baudrate = get_baudrate(sys.argv)
+    filename = get_default_filepath(sys.argv)
+    maxstep = get_default_max_step(sys.argv)
+    auto_offline_rendering = get_auto_offline_rendering(sys.argv)
     if RendererOperation != RendererOperationsType.OfflineRendering:
-        ser = serial.Serial(devicename, baudrate, timeout=0.15)
-        f = open_file_with_proper_name()
+        ser = serial.Serial(device_name, baudrate, timeout=0.15)
+        opened_file = open_file_with_proper_name()
     print(RendererOperation.name)
     ### START QtApp #####
-    if RendererOperation == RendererOperationsType.LivePlotting or autoofflinerender or RendererOperation== RendererOperationsType.OfflineRendering:
+    if RendererOperation == RendererOperationsType.LivePlotting or auto_offline_rendering or RendererOperation== RendererOperationsType.OfflineRendering:
         app = QtGui.QApplication([])  # you MUST do this once (initialize things)
         win = pg.GraphicsWindow(title="Signal from serial port")  # creates a window
         p = win.addPlot(title="Temp plot")  # creates empty space for the plot in the window
@@ -133,7 +120,7 @@ if __name__ == '__main__':
 
 
     # Realtime data plot. Each time this function is called, the data display is updated
-    def live_plotting_execution_target(f, logging, filelogging, t):
+    def live_plotting_execution_target(f, logging, file_logging, t):
         global curve, curve2, ptr, Xm, Am, ser
         Xm[:-1] = Xm[1:]  # shift data in the temporal mean 1 sample left
         Am[:-1] = Am[1:]
@@ -150,7 +137,7 @@ if __name__ == '__main__':
         if logging:
             print("current temp:{} , avg temp{}".format(Xm[-1], Am[-1]))
 
-        if filelogging:
+        if file_logging:
             if not f.closed:
                 f.write("datetime:{} => current temp:{} , avg temp{}\n".format(datetime.datetime.now(), Xm[-1], Am[-1]))
 
@@ -200,7 +187,7 @@ if __name__ == '__main__':
         QtGui.QApplication.processEvents()  # you MUST process the plot now
 
 
-    def offlinerendering(filepath):
+    def offline_rendering(filepath):
         global curve, curve2
         print("offline filepath {0}".format(filepath))
         with open(filepath, "r") as offlinerenderingfile:
@@ -222,27 +209,27 @@ if __name__ == '__main__':
 
 
     if RendererOperation == RendererOperationsType.LivePlotting:
-        renderlooper = ThreadLooper(lambda: live_plotting_execution_target(f, terminallogging, filelogging, True),
+        renderlooper = ThreadLooper(lambda: live_plotting_execution_target(opened_file, terminal_logging, file_logging, True),
                                              name="Live Plotting Thread")
         renderlooper.run()
         attach_to_global_thread_pool(renderlooper)
         print("Plotting Started")
 
     elif RendererOperation == RendererOperationsType.Sampling:
-        renderlooper = ThreadLooper(lambda: sampling_execution_target(f), timeout=maxstep, name="Sampling Thread")
+        renderlooper = ThreadLooper(lambda: sampling_execution_target(opened_file), timeout=maxstep, name="Sampling Thread")
         attach_to_global_thread_pool(renderlooper)
         renderlooper.run()
         print("Sampling started")
         renderlooper.wait()
-        f.close()
-        if autoofflinerender:
+        opened_file.close()
+        if auto_offline_rendering:
             print("entered")
-            offlinerendering(filename)
+            offline_rendering(filename)
 
     elif RendererOperation == RendererOperationsType.OfflineRendering:
         print("entered")
         print(filename)
-        offlinerendering(filename)
+        offline_rendering(filename)
 
 
     elif RendererOperation == RendererOperationsType.Handling: #Not Used
@@ -251,12 +238,12 @@ if __name__ == '__main__':
     else:
         raise Exception("Rendering prosses cannot start")
 
-    if RendererOperation == RendererOperationsType.LivePlotting or autoofflinerender or RendererOperation == RendererOperationsType.OfflineRendering:
+    if RendererOperation == RendererOperationsType.LivePlotting or auto_offline_rendering or RendererOperation == RendererOperationsType.OfflineRendering:
         print("executing")
         pg.QtGui.QApplication.instance().exec_()
         print("UI Proccess Ended")
 
     try:
-        release_resources()  # TODO do not forget to update releasesources method
+        release_resources(ser , opened_file , thread_loopers)
     except:
         pass
