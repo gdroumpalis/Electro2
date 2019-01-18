@@ -27,3 +27,5 @@ settings
 log.txt
 __pycache__/
 tags
+
+electro2_env/
